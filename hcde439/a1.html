@@ -9,10 +9,104 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <h1>Example Student's Assignment 1!</h1>
+    <h1>Assignment 1 blink!</h1>
     <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 1!</p>
-    </div>
+      <img src="schematic.JPEG" />
+      <img src="calculations1.jpg" />
+      <br>
+    </div>This is the schematic for my circuit. After using Ohm's Law to calculate the resistance, I determined that it needed to be 160 ohms. I rounded up to a 220-ohm resistor as it was the closest available value. The red, yellow, and green LED lights all have the same voltage drops, so I decided to use 220-ohm resistors for each LED.</p>
+      </p>
+      <br>
+      <img src="A1.jpg" />
+      <br>
+      </p>
+    </div>This is my circuit. Each LED is connected to its own pin on the Arduino (pins 11–13). This setup allows direct input control for each LED from the Arduino. I chose the red, yellow, and green LED as they all contain the same voltage drop. Below is the code used in my Arduino to program the LED to blink and turn off. </p>
+      <br>
+    </div>void setup() { </div>
+    </p>
+      // Pins 11, 12, and 13 are used as outputs
+    </p>
+      // It starts running after it's powered to the board
+    </p>
+      pinMode(11, OUTPUT);
+    </p>
+      pinMode(12, OUTPUT);
+    </p>
+      pinMode(13, OUTPUT);
+    </p>
+    }
+    </p>
+    <br>
+    </p>
+    void loop() {
+    </p>
+      // Starts on pin 11
+    </p>
+      // turn the red LED on (HIGH is the voltage level)
+    </p>
+      digitalWrite(11, HIGH);
+    </p>
+      // wait for a second
+    </p>
+      delay(1000);
+    </p>
+      // turns the LED off by making the voltage LOW
+    </p>
+      digitalWrite(11, LOW);
+    </p>
+      // wait for a second
+    </p>
+      delay(1000);
+    </p>
+      // turns the yellow LED on by making the voltage high
+    </p>
+      digitalWrite(12, HIGH);
+    </p>
+      // Waits for a second
+    </p>
+      delay(1000);
+    </p>
+      // turns off the LED by making the voltage low
+    </p>
+      digitalWrite(12, LOW);
+    </p>
+      delay(1000); 
+    </p>
+      // turns on the green LED by making the voltage high
+    </p>
+      digitalWrite(13, HIGH);
+    </p>
+      // waits for a second
+    </p>
+      delay(1000);
+    </p>
+      // turns off the LED by making the voltage low
+    </p>
+      digitalWrite(13, LOW);
+    </p>
+      delay(1000);  
+    </p>
+    }
+   </p>
   </body>
-</html>
+  </div>Additional Questions: </div>
+    </p>
+    <br>
+  </div>Q1: Draw a graph where the X axis is time and the Y axis is voltage across the LEDs. Draw a line for each of your 3 LEDs.</div>
+  <img src="graph.jpg" />
+  </div> A1: Each LED is controlled in a sequence, and the cycle repeats indefinitely as part of the loop(). So, the LEDs will blink Red on, red off, yellow on, yellow off, green on, green off, and it'll repeat the cycle.
+  <br>
+  </p> 
+  <br>
+  </div>Q2:How many LEDs could you blink independently with your Arduino? How much current would that draw?</div>
+  </p> 
+  </div>A2: The number of LEDs that can be controls depends on the number of available pins on the Arduino and the total current of each pin. Pins 0-13 are available for output, but also contains RX and TX, so only 12 pins would be available. It’s important that we have the correct calculations to avoid shorting the board. If we are using 12 pins, we would need to use 20 mA or less. The calculations would be 20 mA X 12 = 240 mA. When running the 12 pins the current should not exceed 240 mA.</div>
+  <br>
+  </p>
+  <br>
+  </div> Q4: How fast do you need to blink your LEDs until you no longer can tell that they are blinking?</div>
+    </p>
+  </div> A4: I experimented with it and found that around 12 seconds, it becomes difficult to tell if the LED is blinking. However, I could be wrong because I got a bit confused and lost track.
+
+
+  </html>
