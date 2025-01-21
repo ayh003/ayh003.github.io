@@ -1,18 +1,117 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+  <title>Example Student's HCDE 439 Physical Computing Page!</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
 
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+  <h1>Assignment 2: Fade!</h1>
 
-    <link href="style.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <h1>Example Student's Assignment 2!</h1>
-    <div class="header">
-      <img src="red-panda.jpg" />
-      <p>Here is all the documentation for assignment 2!</p>
-    </div>
-  </body>
+  <div class="header">
+    <p>Schematic for A2!</p>
+    <img src="Schematic2.jpeg"/>
+    <p>Here's the calculations for the yellow, green, and red resistors! 
+       For the button, I used a 10k-ohm resistor as a protective measure for controlling the electricity flow and to ensure that my circuit won't be cut. 
+       In class, it was also suggested that we use a 10k-ohm resistor for the button.
+    <img src="calculationsA2.jpg" alt="Resistor calculations" />
+  </div>
+
+  <p>This is my circuit!</p>
+  <img src="A2 circuit.jpeg" alt="A2 circuit" />
+
+  <p>
+    The class slide L3, slide number 37, helped me figure out the placement of my button and LEDs. 
+    My button uses a 10k-ohm resistor, and all of my LEDs use a 220-ohm resistor. 
+    When the button is pressed, all LEDs will light up and fade away.
+  </p>
+
+  <h2>My Code!</h2>
+
+  <pre>
+    <code>
+      const int buttonPin = 2;     // button is connected to digital pin 2
+      const int yellowLedPin = 9;  // yellow LED is connected to digital pin 9
+      const int greenLedPin = 10;  // green LED is connected to digital pin 10
+      const int redLedPin = 11;    // red Led is connected to digital pin 11
+      
+      int buttonState = 0; // the buttons status
+      
+      void setup() {
+        pinMode(yellowLedPin, OUTPUT);  //setting the yellow LED as an output
+        pinMode(greenLedPin, OUTPUT);   //setting the green LED as an ouput
+        pinMode(redLedPin, OUTPUT);     //setting the red LED as an output
+        pinMode(buttonPin, INPUT);     //setting the buttonPin as an input
+      
+      }
+      
+      void loop() {
+        // reads the state of the button, if it has been pressed(on or off)
+        buttonState = digitalRead(buttonPin);
+        // if the button is pressed, it is represented as high
+        if(buttonState == HIGH){
+        // turns yellow Led on
+          digitalWrite(yellowLedPin, HIGH);
+        // turns green Led on
+          digitalWrite(greenLedPin, HIGH);
+        // turns red Led on
+          digitalWrite(redLedPin, HIGH);
+          
+      
+        // fade in from min to max in increments of 5 points
+        // sets the value (range from 0 to 255)
+        for (int fadeValue = 0; fadeValue <= 255; fadeValue += 5) {
+          analogWrite(yellowLedPin, fadeValue);
+          analogWrite(greenLedPin, fadeValue);
+          analogWrite(redLedPin, fadeValue);
+          // wait for 30 milliseconds to see the dimming effect
+          delay(30);
+        }
+      
+        // fade out from max to min in increments of 5 points:
+        // sets the value (range from 0 to 255):
+        for (int fadeValue = 255; fadeValue >= 0; fadeValue -= 5) {
+          analogWrite(yellowLedPin, fadeValue);
+          analogWrite(greenLedPin, fadeValue);
+          analogWrite(redLedPin, fadeValue);
+          // wait for 30 milliseconds to see the dimming effect
+          delay(30);
+        }
+      } else {
+      digitalWrite(yellowLedPin, LOW);
+      digitalWrite(greenLedPin, LOW);
+      digitalWrite(redLedPin, LOW);
+      }
+    }
+      
+    </code>
+  </pre>
+  </p>
+
+  </p>
+    Additional Quesitons:
+    Q1: 1: Draw a chart where the X axis is time and the Y axis is voltage. Draw 3 lines representing the voltage across an LED with analogWrite(led, 64), analogWrite(led, 128), and analogWrite(led,255).
+  </p>
+
+  </p>
+    A1: <img src="Answer1A2.jpg"/>
+  </p>
+
+  </p>
+  Q2:Given your schematic, circuit, and firmware, assuming the only thing that draws current is your LEDs, how long would your circuit run if powered by a 1200 mAh battery?
+  </p>
+
+  </p>
+  A2: <img src="A2answer.jpg"/>
+  I think after the calculations if only the LED is drawing current in the circuit. Then if it's powered by a 1200 mAh battery I think it can run for approximately 28 hours.
+  </p>
+
+  </p>
+   
+  </p>
+  video link: https://youtu.be/nNKM7WxHN5c
+  </p>
+</body>
 </html>
