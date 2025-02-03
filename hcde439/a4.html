@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 4 Libraries!</h1>
+    <div class="header">
+      <img src="a4libraries.gif" />
+      <p>For this project, I built a circuit that uses a remote control and joystick as inputs, and a servo motor as the output. The system lets the user control the servo motor both wirelessly (with the remote) and manually (with the joystick). I used the Servo and IRremote libraries to make it work. However, due to time limits, I couldn't figure out the problem with my code for the remote. When I press the "1" and "2" buttons on the remote, the servo motor doesn't respond. I think there might be an issue with the signal, as the remote and servo motor arent communicating as expected. Even though the remote part isn't working, the joystick functions as its intended.</p>
+    </div>
+    
+
+    <h2>Schematic:</h2>
+    <img src="SchematicA4.jpg" />
+    <p> Here is the schematic for my libraries. I made majority of my connections on the arduino board. </p>
+
+    <h3>Circuit:</h3>
+    <img src="a4circuitpic.jpg" />
+
+    <h4>Code:</h4>
+    <pre><code>
+#include Servo.h   // Servo library to control the servo motor
+#include IRremote.h   // IRremote library to receive IR signals
+            
+Servo myservo;  // controls the servo motor
+            
+
+int pinX = A0;         // Joystick X axis connected to pin A0
+int pinY = A1;         // Joystick Y axis connected to pin A1
+int buttonPin = 2;     // Joystick button connected to pin 2
+int servoPin = 9;      // Servo motor connected to pin 9
+int IRPin = 3;         // IR receiver module connected to pin 3
+            
+int xVal = 0;          //  stores the X axis joystick value
+int yVal = 0;          //  stores the Y axis joystick value
+int buttonState = 0;   //  stores the joystick button state
+int servoPos = 90;     //  servo position start in the middle
+            
+IRrecv irrecv(IRPin);   //  IR receiver to read data from the IR remote
+decode_results results; //  stores the decoded IR signal results
+            
+void setup() {
+    pinMode(pinX, INPUT);           // Set joystick X axis pin as input
+    pinMode(pinY, INPUT);           // Set joystick Y axis pin as input
+    pinMode(buttonPin, INPUT_PULLUP); // internal pull-up resistor for the button pin
+    Serial.begin(9600);             // Serial communication at 9600 baud rate
+                
+    myservo.attach(servoPin);       // Attach the servo motor to the pin 9
+    irrecv.enableIRIn();            // Starts the IR receiver module
+}
+            
+void loop() {
+    xVal = analogRead(pinX);        // Reads the Xaxis value from the joystick
+    yVal = analogRead(pinY);        // Reads the Yaxis value from the joystick
+    buttonState = digitalRead(buttonPin); // Reads the button state 
+              
+    servoPos = map(xVal, 0, 1023, 0, 180);   // Maps the joystick X value to a servo range between 0 to 180 degrees
+    myservo.write(servoPos);        // Moves the servo to the mapped position
+            
+    if (results.value == 0xF30CFF00) {   // When 1 is pressed and the IR signal matches the hex code
+    servoPos = 0;                      // Move servo to 0 degree position
+    } 
+    else if (results.value == 0xE718FF00) { // If 2 is pressed and the IR signal is received
+    servoPos = 180;                     // Move servo to 180 degree position
+    }
+            
+myservo.write(servoPos);  // Moves the servo to the new position
+irrecv.resume();          // Resume IR signal for the next input
+}
+            
+// Prints values to the serial monitor
+Serial.print("x: ");
+Serial.print(xVal);
+Serial.print(" y: ");
+Serial.print(yVal);
+Serial.print(" Button: ");
+Serial.println(buttonState);
+            
+ delay(100);  // Short delay
+</code></pre>
+
+<p> Additional Questions</p>
+<p>Q1: Draw a graph with the X axis in seconds, for two seconds, and the y-axis the voltage at pin 9 with respect to ground.</p>
+<img src="a4q1.jpg" />
+<p>Q2:Your input device is slightly broken, leading it to give us an erroneous reading 1% of the time. How can we address this? Answer in (pseudo)code.</p>
+<p>A2: Can address this by taking multiple readings.</p>
+<p>// take multiple readings </p>
+<p>// take the readings and find the sum</p>
+<p>// Calculate the average of the reading</p>
+<p>Q3: Your input device is slightly noisy, leading the measurement to randomly deviate from the true measurement up or down by 10%. How can we address this?</p>
+<p>A3: Take the mulitple measurements, and take the average</p>
+<p>// take multiple readings</p>
+<p>// calculate the average</p>
+</body>
+</html>
