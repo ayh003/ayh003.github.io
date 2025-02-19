@@ -39,21 +39,21 @@
     <pre><code>
             #include IRremote.hpp
             
-            const int IR_RECEIVE_PIN = 12;  // IR receiver connected to pin 12
-            const int MOSFET_GATE = 9;      // MOSFET gate connected to pin 9
+            const int Ir_receive_Pin= 12;  // IR receiver connected to pin 12
+            const int Mosfet_Pin = 9;      // MOSFET gate connected to pin 9
             
-            #define MOTOR_ON_BUTTON 0xC    // Button "1" pressed on (hex code)
-            #define MOTOR_OFF_BUTTON 0x18  // Button "2" pressed off (hex code)
+            #define MotorOn 0xC    // Button "1" pressed on (hex code)
+            #define MotorOff 0x18  // Button "2" pressed off (hex code)
             
             void setup() {
                 Serial.begin(9600); // Start serial communication for debugging
                 while (!Serial); // Wait for Serial to become available
              
                 Serial.println(F("IR Remote Control for DC Motor")); // Prints the message "IR Remote control for DC motor"
-                IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK); // Start the IR receiver
+                IrReceiver.begin(Ir_receive_Pin, ENABLE_LED_FEEDBACK); // Start the IR receiver
             
-                pinMode(MOSFET_GATE, OUTPUT); // Set MOSFET gate pin as output
-                analogWrite(MOSFET_GATE, 0);  // Makes sure that the motor start's off turned off
+                pinMode(Mosfet_Pin, OUTPUT); // Set MOSFET gate pin as output
+                analogWrite(Mosfet_Pin, 0);  // Makes sure that the motor start's off turned off
             }
             
             void loop() {
@@ -62,13 +62,13 @@
                     Serial.println(IrReceiver.decodedIRData.command, HEX); // Print the received command in HEX
             
                     // Turn motor ON
-                    if (IrReceiver.decodedIRData.command == MOTOR_ON_BUTTON) {
-                        analogWrite(MOSFET_GATE, 255); // Turn's the motor ON (full speed)
+                    if (IrReceiver.decodedIRData.command == MotorOn) {
+                        analogWrite(Mosfet_Pin, 255); // Turn's the motor ON (full speed)
                         Serial.println(F("Motor ON")); // prints out the message that it's on
                     } 
                     // Turn motor OFF
-                    else if (IrReceiver.decodedIRData.command == MOTOR_OFF_BUTTON) { //if "2" is pressed then the statement is true
-                        analogWrite(MOSFET_GATE, 0); // Turn motor OFF
+                    else if (IrReceiver.decodedIRData.command == MotorOn) { //if "2" is pressed then the statement is true
+                        analogWrite(Mosfet_Pin, 0); // Turn motor OFF
                         Serial.println(F("Motor OFF")); // prints out the message that it's off
                     }
             
