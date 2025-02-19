@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 5 High(er) voltage and transistors!</h1>
+    <div class="header">
+      <img src="A5 motor.gif" />
+      <p>For A5, we needed to use an N-MOSFET transistor, an external power supply, and an input sensor. In class, we used the H-bridge and the fan motor. 
+        Therefore, I was thinking I could do something similar and use the N-MOSFET instead. I also read the extra resources for help.
+        The input would be the remote. Going into this, I knew I might struggle with using the remote because, 
+        in the last assignment, I couldn't get the remote to work. However, I didnt want to doubt myself, so I decided to give it a try anyway. 
+        After hours of trying to figure it out, I realized I should have approached it differently.
+        Everything works, but the components didn't work together as expected. The fan motor would spin and function when connected to the 
+        external power supply. However, when I tried to control it with the remote, it wouldnt work. I know the remote was functioning 
+        because it was printing messages to the serial monitor. Overall, it worked, but not the way I expected it to. I also wasnt sure if 
+        it was my code that was the issue or if its my wiring. But at this point, I didnt have more time to figure out the issue. My plan was so that I use
+        IR receiver to receive signals from a remote that would allow you to turn on and off the dc motor. If you press 1, it will turn on and if you press 2, it 
+        would turn off. I was also scared that I would short circuit, so I tried to be more careful. Attached is also of a gif of the remote working. </p>
+
+    </div>
+
+    <img src="A5remote.gif" />
+    
+
+    <h2>Schematic:</h2>
+    <p> Here is the schematic for A5. </p>
+    <img src="SchematicA5.jpeg" />
+    
+
+    <h3>Circuit:</h3>
+    <img src="A5circuit.jpg" />
+
+    <h4>Code:</h4>
+    <pre><code>
+            #include IRremote.hpp
+            
+            const int IR_RECEIVE_PIN = 12;  // IR receiver connected to pin 12
+            const int MOSFET_GATE = 9;      // MOSFET gate connected to pin 9
+            
+            #define MOTOR_ON_BUTTON 0xC    // Button "1" pressed on (hex code)
+            #define MOTOR_OFF_BUTTON 0x18  // Button "2" pressed off (hex code)
+            
+            void setup() {
+                Serial.begin(9600); // Start serial communication for debugging
+                while (!Serial); // Wait for Serial to become available
+             
+                Serial.println(F("IR Remote Control for DC Motor")); // Prints the message "IR Remote control for DC motor"
+                IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK); // Start the IR receiver
+            
+                pinMode(MOSFET_GATE, OUTPUT); // Set MOSFET gate pin as output
+                analogWrite(MOSFET_GATE, 0);  // Makes sure that the motor start's off turned off
+            }
+            
+            void loop() {
+                if (IrReceiver.decode()) { // Check if an IR signal is received
+                    Serial.print(F("Received HEX Code: 0x")); // Prints out the message
+                    Serial.println(IrReceiver.decodedIRData.command, HEX); // Print the received command in HEX
+            
+                    // Turn motor ON
+                    if (IrReceiver.decodedIRData.command == MOTOR_ON_BUTTON) {
+                        analogWrite(MOSFET_GATE, 255); // Turn's the motor ON (full speed)
+                        Serial.println(F("Motor ON")); // prints out the message that it's on
+                    } 
+                    // Turn motor OFF
+                    else if (IrReceiver.decodedIRData.command == MOTOR_OFF_BUTTON) { //if "2" is pressed then the statement is true
+                        analogWrite(MOSFET_GATE, 0); // Turn motor OFF
+                        Serial.println(F("Motor OFF")); // prints out the message that it's off
+                    }
+            
+                    IrReceiver.resume(); // Ready to receive the next IR signal
+                }
+            }
+            
+</code></pre>
+<h5>Questions</h5>
+<p> Question 1: What is the absolute maximum amount of current between pins 2 and 3? </p>
+<p>A1: The highest current the transistor can handle before it risks damage. Continuous Drain Current, and Pulsed Drain Current. It is labelled as 80A.   </p>
+<p>Question3:Draw a schematic using at least your arduino, this chip, and two motors. Write (pseudo) code that shows how you would move the motors both forward, both back, then one forward one back, and one back then forward.</p>
+
+<pre><code>
+// Define motor control pins
+pin = 1
+pin = 2
+pin = 7
+pin = 10
+pin = 13
+
+// Move both motors forward
+digitalWrite(pin, HIGH)
+digitalWrite(pin, LOW)
+delay
+//Move backwards
+digitalWrite(pin, LOW)
+digitalWrite(pin, HIGH)
+delay
+
+
+
+</code></pre>
+</body>
+</html>
