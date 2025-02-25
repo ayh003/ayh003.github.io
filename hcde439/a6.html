@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
+    <title>Amy's HCDE 439 Physical Computing Page!</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>Assignment 6 Talking to the Web!</h1>
+    <div class="header">
+      <img src="A6 talking to the web.gif" />
+      <p>For this assignment, we were tasked with creating a webpage using p5.js that interacts with an Arduino. The project also required incorporating keyboard or mouse interactions to trigger physical changes. Additionally, the webpage needed to be interactive.
+        For my homework, I used a joystick (which counts as 2-3 inputs), a button (another input), and three LEDs (outputs). This idea was inspired by the rectangle example from the class example. The joystick controls the movement of rectangles on the webpage, while pressing the button changes the background color. The LEDs can be turned on and off using keyboard numbers 1-6.
+        The GIF demonstrates how all these components interact and function together.  </p>
+    </div>
+    
+    <h2>Calculations:</h2>
+    <img src="A6 Calculations.jpg" alt="Resistor Calculations" />
+    <p> Here are the calculations for the yellow, green, and red resistors!
+        After performing the calculations, I decided that a 220-ohm resistor is safe to use.
+        For the button, I used a 10k-ohm resistor as a pull-down resistor. This helps control the flow of electricity, ensuring 
+        stable input readings and preventing unintended behavior. It also ensures that the circuit remains complete and functional 
+        without sudden disconnections or floating signals.
+    </p>
+    </div>
+
+    <h3>Schematic:</h3>
+    <img src="A6 Schematic.jpg" />
+    <p>The schematic consists of a joystick, a button, three LEDs, and an Arduino, are all interconnected to enable two-way interaction 
+        between arduino and the p5.js webpage. The joystick, which functions as both an analog and digital input, has two potentiometers 
+        that control the X and Y axes, sending analog values to A1 and A0 on the Arduino. Additionally, it has a built-in button connected 
+        to digital pin 2 as a digital input. A push button is connected to digital pin 3, with a 10k-ohm pull-down resistor ensuring stable 
+        input readings by keeping the signal LOW when not pressed. The three LEDs act as outputs, connected to digital pins 8, 9, and 10, each
+         with a 220-ohm resistor to limit current and prevent damage. The Arduino continuously reads the joysticks X and Y values along with 
+         the button states and transmits them using Serial communication to the p5.js webpage. The webpage processes the joystick input to 
+         move rectangles on the screen and changes the background color when the button is pressed. Additionally, the webpage can send 
+         commands back to the Arduino using keypresses 1-6 to control the LEDs, turning them on or off based on user input. Power 
+         comes from the Arduinos 5V pin, while all parts share a common ground to complete the circuit.
+    </p>
+
+    <h4>Circuit:</h4>
+    <img src="A6 Circuit.jpg" />
+    <p>The circuit was built by connecting each component to the Arduino while ensuring proper voltage, grounding, and signal flow. 
+        The joystick has five pins: VCC, GND, VRX, VRY, and SW. The VCC was connected to the 5V pin on the Arduino, and GND was connected 
+        to the Arduinos GND. The VRX and VRY pins were connected to A1 and A0. The joystick button (SW) is connected to digital pin 2, 
+        with the internal pull-up resistor enabled in the code to make sure a stable signal when its not pressed. The push button was 
+        wired separately using a 10k-ohm pull-down resistor to ensure signal when its not pressed. One leg of the button was connected 
+        to power, while the opposite leg was connected to digital pin 3 and also to GND through the pull-down resistor. This ensures 
+        that when the button is pressed, it sends a high signal to the Arduino. For the three LEDs, each was connected to a separate 
+        PWM digital pin (8, 9, and 10). Each LEDs anode was connected to its own pin, while the cathode was connected to GND through 
+        a 220-ohm resistor. These resistors prevent excessive current flow, protecting both the LEDs and the Arduino.</p>
+
+    <h5>Arduino Code:</h5>
+    <pre><code>
+        const int joystickX = A1;  // Joystick X-axis
+        const int joystickY = A0;  // Joystick Y-axis
+        const int joyButton = 2;   // Joystick Pin 2
+        const int button = 3;      // Button that controls the background
+        
+        const int ledYellow = 8;  // Yellow LED
+        const int ledGreen = 9;  // Green LED
+        const int ledRed = 10;  // Red LED
+        
+        void setup() {
+          Serial.begin(9600); // initialize serial communication
+        
+          pinMode(joyButton, INPUT_PULLUP); // Sets the joystick as input with the internal up resistor
+          pinMode(button, INPUT_PULLUP); // Sets the button as input with the internal up resistor
+        
+          pinMode(ledYellow, OUTPUT);  // Sets the yellow Led as an output pin
+          pinMode(ledGreen, OUTPUT); // Sets the green Led as an output pin
+          pinMode(ledRed, OUTPUT); // Sets the Red Led as an output pin
+        }
+        
+        void loop() {
+          int xValue = analogRead(joystickX); // Reads the x axis position from 0-1023
+          int yValue = analogRead(joystickY); // Reads the y axis position from 0-1023
+          int joyBtnState = digitalRead(joyButton); // Reads the current state of the joystick (0 if pressed, and 1 if not pressed)
+          int buttonState = digitalRead(button); // Reads the state of the button (0 if pressed, and 1 if not pressed)
+        
+          Serial.print(xValue); //prints the x axis value
+          Serial.print(","); // prints a comma to separate
+          Serial.print(yValue); // prints the y axis value
+          Serial.print(","); // prints the comma to separate
+          Serial.print(joyBtnState); // prints out the joystick state(0 or 1)
+          Serial.print(","); // prints out he comma to separate
+          Serial.println(buttonState); // End with newline
+        
+          if (Serial.available() > 0) { // Checks if the data is available frim the serial port from p5.js
+            char command = Serial.read(); // Reads & used to control the LEDs
+        
+            if (command == '1') digitalWrite(ledYellow, HIGH); // Turns on the yellow Led
+            if (command == '2') digitalWrite(ledYellow, LOW); // Turns off the yellow Led
+            if (command == '3') digitalWrite(ledGreen, HIGH); // Turns on the green Led
+            if (command == '4') digitalWrite(ledGreen, LOW); // Turns off the green Led
+            if (command == '5') digitalWrite(ledRed, HIGH); // Turns on the red Led
+            if (command == '6') digitalWrite(ledRed, LOW); // Turns off the red Led
+          }
+        
+          delay(50); // Slight delay
+        }
+
+</code></pre>
+  </body>
+
+  <h6>Js File code:</h6>
+  <pre><code>
+const baud_rate = 9600; //Baud Rate for serial communication (matches arduino)
+let port, connectBtn; // serial port and connection button
+let joystickX = 512, joystickY = 512; // initalize the joystick in centered position
+let joyButton = 1, button = 1; // button state, 1 means it's not pressed
+let bgColor = 230; // The default button that is light gray
+
+function setup() {
+  setupSerial(); // initialize the serial connecction
+  createCanvas(720, 400); // a 720 x 400 pixel canvas
+  noStroke(); // no outline strokes for the shape
+  rectMode(CENTER); // makes the rectangles be drawn from thier center
+}
+
+function draw() {
+  const portIsOpen = checkPort(); // checks if the serial port is open
+  if (!portIsOpen) return; // If the port is not open it exits 
+
+  let str = port.readUntil("\n"); //read new serial data 
+  if (str.length == 0) return; // no data means exits
+ 
+  let values = str.trim().split(","); // Gets rid of whitespace and split strings by commas
+  if (values.length === 4) { // 4 values
+    joystickX = Number(values[0]); //converts first value to a number for x-axis
+    joystickY = Number(values[1]); // converts sec value to number for y-axis
+    joyButton = Number(values[2]); // convert the third value to a number for the joystick
+    button = Number(values[3]); // converts the fourth value to number for the button
+  }
+
+  // Change background color when the button is pressed
+  bgColor = button === 0 ? color(100, 150, 255) : 230; // Blue background, when pressed it becomes gray
+
+  background(bgColor); //applies the background color
+
+  // Map joystick values to the canvas size (0-1023)
+  let mappedX = map(joystickX, 0, 1023, 0, width);
+  let mappedY = map(joystickY, 0, 1023, 0, height);
+
+  fill(244, 122, 158); // fill color for the first rectangle
+  rect(mappedX, height / 2, mappedY / 2 + 10, mappedY / 2 + 10); //rectangle based on the joystick position
+
+  fill(237, 34, 93); //Set fill color for the second rectangle
+  let inverseX = width - mappedX; // Invert xposition for the second rectangle
+  let inverseY = height - mappedY;
+  rect(inverseX, height / 2, inverseY / 2 + 10, inverseY / 2 + 10);
+}
+
+// Serial connection setup
+function setupSerial() {
+  port = createSerial();
+
+  let usedPorts = usedSerialPorts(); //list of serial ports
+  if (usedPorts.length > 0) {
+    port.open(usedPorts[0], baud_rate); //open the available port with the baud rate
+  }
+
+  connectBtn = createButton("Connect to Arduino"); //button that connects to arduino
+  connectBtn.position(5, 5);
+  connectBtn.mouseClicked(onConnectButtonClicked);
+}
+
+// Checks if port is open and updates UI 
+function checkPort() {
+  if (!port.opened()) {
+    connectBtn.html("Connect to Arduino"); //update the button
+    background("gray"); // set the background to gray
+    return false;
+  } else {
+    connectBtn.html("Disconnect"); // update 
+    return true;
+  }
+}
+
+// Handles connect/disconnect button click
+function onConnectButtonClicked() {
+  if (!port.opened()) {
+    port.open(baud_rate);
+  } else {
+    port.close();
+  }
+}
+
+// Send commands based on keyboard input to control LEDs
+function keyPressed() {
+  if (!port.opened()) return;
+  
+  if (key === '1') port.write('1'); // LED yellow  on
+  if (key === '2') port.write('2'); // LED yellow OFF
+  if (key === '3') port.write('3'); // LED green ON
+  if (key === '4') port.write('4'); // LED green OFF
+  if (key === '5') port.write('5'); // LED red ON
+  if (key === '6') port.write('6'); // LED red OFF
+}
+
+  </code>
+<p>
+    Discussed/Collaborated with Jennifer Duong & Vincent Dinh
+</p>
+</html>
