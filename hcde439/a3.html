@@ -3,104 +3,128 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, maximum-scale=1.0" />
-    <title>Example Student's HCDE 439 Physical Computing Page!</title>
+    <title>Amy's HCDE 439 Physical Computing Page!</title>
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <h1>Assignment 3 Input Output!</h1>
     <div class="header">
-      <img src="inputoutput.gif" />
-      <p>For this assignment, I designed a circuit that uses two LEDs controlled by a photoresistor. 
-        The photoresistor's resistance changes in response to the light intensity, and the measurements 
-        to this change is measured through an analog input pin (A0). The value read by the photoresistor 
-        is used to adjust the brightness of both LEDs: one red and one green. The red and greens LED's 
-        brightness increases as the light decreases. </p>
-    </div>
-    
-      <p>Calculations!</p>
-      <img src="inputout_calc.jpg" alt="Input Output Calculations" />
+      <img src="A3resub.gif" alt="A3 Assignment GIF" />
+      <p>For this assignment, I created a circuit with two LEDs (red and green)
+         controlled by a photoresistor. The photoresistor changes its resistance
+         based on light intensity, and the value is read through the analog input
+         pin (A0). When the environment is bright, both LEDs are off. As the light
+         gets dimmer, the LEDs' brightness increases. When it's dark, the LEDs
+         will be bright.</p>
     </div>
 
-    <h2>Schematic:</h2>
-    <img src="A3_schematic.jpg" />
+    <h1>Calculations</h1>
+    <img src="A3resubcalculations.jpg" alt="Calculations for A3 Assignment" />
 
-    <h3>Circuit:</h3>
-    <img src="A3_Circuit.jpg" />
+    <h2>Schematic</h2>
+    <img src="A3Resubschematic.jpg" alt="Schematic for A3 Assignment" />
+    <p>In my schematic, the photoresistor (LDR) is placed in a voltage
+       divider circuit with a fixed resistor. One side of the photoresistor
+       is connected to the resistor, and the other side is connected to
+       the analog input pin A0. The resistance of the
+       photoresistor changes based on the intensity of light. 
+       When it is bright, its resistance decreases, resulting in a lower
+       voltage at the analog pin, while in darker conditions, its resistance
+       increases, leading to a higher voltage. This voltage is read by the
+       Arduino using analogRead(). The red and green LEDs are connected to PWM
+       pins 9 and 10, each with a 220 ohm’s resistor to prevent
+       excessive current flow. As the light dims and the resistance of the
+       photoresistor increases, the Arduino increases the LED brightness 
+       using analogWrite(), making the LEDs brighter when it's dark and 
+       turning them off when the light is bright.</p>
     
+    <h3>Circuit</h3>
+    <img src="A3circuitresub.jpg" alt="Circuit Diagram" />
+    <p>This is how I built my circuit. I started by placing
+       the photoresistor (LDR) on the breadboard then connect
+       one end of the photoresistor to the power supply on the
+       breadboard, and the other end to a 10kΩ resistor. Also
+       connecting the other end of the resistor to ground, with
+      the other side of the photoresistor and resistor as the
+      analog input pin (A0) on the Arduino, where the light 
+      intensity will be read. For the LEDs, I added the red 
+      and green LEDs into the breadboard, ensuring the anode
+      connects to the pins 9 & 10 on the Arduino. Connected 
+      the cathode of each LED to ground through a 220Ω resistor 
+      to protect the LEDs from excess current. Lastly, powered 
+      the Arduino using a USB connection to the laptop.</p>
 
-    <h4>Arduino Code:</h4>
+    <h4>Circuit Action</h4>
+    <img src="A3gif.gif" alt="Circuit Diagram" />
+
+
+    <h4>Code:</h4>
     <pre><code>
-// The pin of the red LED
-const int redPin = 11;
-// The pin of the green LED
-const int greenPin =13;
-// The analog input pin that is attached to the photoresistor
-const int analogInPin = A0;
 
-// Reads and stores the value of the photoresistor
-int sensorValue = 0;
-// The PWM value for the red LED
-int redOutputValue = 0;
-// The PWM value for the green LED
-int greenOutputValue = 0;
+      const int redPin = 10;   // red LED to pin 10
+      const int greenPin = 9;   // green LED to pin 9
+      
+      const int analogInPin = A0; // A0 is the input pin for the photoresistor
+      
+      int sensorValue = 0; // stores the sensor value from the photoresistor
+      int ledBrightness = 0; // stores the brightness level for both LEDs
+      
+      void setup() {
+        pinMode(redPin, OUTPUT);  // Set the red LED pin as an output
+        pinMode(greenPin, OUTPUT);  // Set the green LED pin as an output
+        Serial.begin(9600);  // Start serial communication at 9600
+      }
+      
+      void loop() {
+        sensorValue = analogRead(analogInPin);  // Read sensor value from the photoresistor
+      
+        // Prints the sensor value to the Serial Monitor
+        Serial.print("Sensor input: ");
+        Serial.println(sensorValue);
+      
+      // If the sensor value is higher than 600 (bright)
+        if (sensorValue > 600) { 
+          analogWrite(redPin, 0);  // Turn off the red LED
+          analogWrite(greenPin, 0);  // Turn off the green LED
+          Serial.println("Lights OFF");  // Print a message to the Serial Monitor
+      
+        } else {  // If the sensor value is lower than 600 (dim)
+          ledBrightness = map(sensorValue, 600, 100, 0, 255);  // Map sensor (0 to 255)
+          ledBrightness = constrain(ledBrightness, 0, 255);  // brightness stays within 0-255 range
+      
+          analogWrite(redPin, ledBrightness);  // brightness of the red LED
+          analogWrite(greenPin, ledBrightness);  // brightness of the green LED
+      
+          // LED brightness to the Serial Monitor 
+          Serial.print("LED Brightness: ");
+          Serial.println(ledBrightness);
+        }
+      
+        Serial.println("");  // blank line 
+        delay(150);  // Wait for 150 milliseconds
+      }
+      
+    </code></pre>
 
-void setup() {
-  // Set the red LED pin as an output
-  pinMode(redPin, OUTPUT);
-  // Set the green LED pin as an output
-  pinMode(greenPin, OUTPUT);
+    <h5>Questions</h5>
+    <p>Question 1: In your voltage divider, can the variable resistor be either R1 or R2 
+      or does it need to be one or the other? Justify your answer with example calculations.</p>
+    <p>A1: 
+      <img src="q1resub.jpg" />
+      Technically, the resistor can be R1 or R2 depending on what you want the output(Vout) to be.
+      If you want Vout to decrease as it gets darker, use R1. If you want Vout to increase as it gets darker, use R2. In my circuit, since the LED turns on when it gets darker, I should use 
+      R2, as it makes it easier to trigger the LED brightness.
+    </p>
 
-  // initialize serial communication at 9600 baud
-  Serial.begin(9600);
-}
+    <p> Question 2: Draw a graph where the x-axis is time and the y-axis is voltage. Plot the voltage at V-measure of your voltage divider of your shared gif.</p>
+    <p>A2:</p>
+    <p>
+      <img src="Q2A3resub.jpg" />
+    </p>
 
-void loop() {
-  // Reads the analog input value
-  sensorValue = analogRead(analogInPin);
-  // Prints the sensor value to the Serial Monitor to check the reading
-  Serial.print("Sensor value: ");
-  // Prints the value of 'sensorValue' to the Serial Monitor in a new line
-  Serial.println(sensorValue);
-
-  // maps the photoresistor value to PWM range for the LED
-  // The brightness for the red LED
-  redOutputValue = map(sensorValue, 0, 1023, 0, 255);
-  // Constrains the value of redOutputValue to be between 0 and 255.
-  redOutputValue = constrain(redOutputValue, 0, 255);
-  // maps the photoresistor value to PWM range for the LED
-  // The brightness for the green LED
-  greenOutputValue = map(sensorValue, 0, 1023, 255, 0);
-  // Constrains the value of greenOutputValue to be between 0 and 255.
-  greenOutputValue = constrain(greenOutputValue, 0, 255);
-
-  // if the sensor is not being triggered, sensor value is less than 200
-  if (sensorValue < 200) {
-    // Turn off the red LED by writing 0 to the redPin
-    analogWrite(redPin, 0);
-    // Turn off the green LED by writing 0 to the greenPin
-    analogWrite(greenPin, 0);
-  } else {
-    // If the sensor is triggered it set's the red LED to redOutputValue
-    analogWrite(redPin, redOutputValue);
-    // Set the green LED to greenOutputValue
-    analogWrite(greenPin, greenOutputValue);
-  }
-
-  // print the results to the Serial Monitor:
-  Serial.print("sensor = ");
-  // print the current value of sensorValue to the Serial Monitor
-  Serial.print(sensorValue);
-  // print the "red LED output =  " to the Serial Monitor
-  Serial.print("\t red LED output = ");
-  // print the current value of redOutputValue to the Serial Monitor with a new line
-  Serial.println(redOutputValue);
-  // print the "green LED output = " to the Serial Monitor
-  Serial.print("\t green LED output = ");
-  // Print the current value of greenOutputValue to the Serial Monitor with a new line
-  Serial.println(greenOutputValue);
-
-  // wait 10 millisecond before the next loop 
-  delay(10);
-}</code></pre>
+    <p>Question 3:  AnalogWrite and analogRead are respectively 8-bit and 10-bit values. Imagine you had 10-bit PWM and a 16-bit analog-to-digital converter instead. How would this change your map() code? Explain your answer.</p>
+    <p>A3: If I had a 10-bit PWM and a 16-bit ADC, their value ranges would be different: the 10-bit PWM would range from 0 to 1023, while the 16-bit ADC would range from 0 to 65535. 
+      To map the ADC values to the PWM range, Id use the map() function to scale the ADC values from 0-65535 to the PWM range of 0-1023. It would look like: map(Value, 0, 65535, 0, 1023)</p>
   </body>
 </html>
+
